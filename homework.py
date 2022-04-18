@@ -35,6 +35,7 @@ HOMEWORK_STATUSES = {
 
 
 def send_message(bot, message):
+    """Отправка сообщения в Телеграм."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.info(f'Сообщение в чат {TELEGRAM_CHAT_ID}: {message}')
@@ -43,6 +44,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
+    """Запрос к единственному эндпоинту API-сервиса."""
     timestamp = current_timestamp or int(time.time())
     payload = {'from_date': timestamp}
     try:
@@ -57,6 +59,7 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
+    """Проверка ответа API-сервиса на корректность."""
     if type(response) is not dict:
         raise TypeError('Ответ API не является словарем')
     try:
@@ -73,6 +76,7 @@ def check_response(response):
 
 
 def parse_status(homework):
+    """Извлечение статуса конкретной работы."""
     if 'homework_name' not in homework:
         raise KeyError
     if 'status' not in homework:
@@ -86,6 +90,7 @@ def parse_status(homework):
 
 
 def check_tokens():
+    """Проверка токенов."""
     if all((PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)):
         return True
 
