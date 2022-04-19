@@ -50,8 +50,8 @@ def get_api_answer(current_timestamp):
     try:
         response = requests.get(ENDPOINT, headers=HEADERS, params=payload)
         if response.status_code != HTTPStatus.OK:
-            logger.error('Возникла ошибка: {response}')
-            raise Exception('Возникла ошибка: {response}')
+            logger.error(f'Возникла ошибка: {response}')
+            raise Exception(f'Возникла ошибка: {response}')
         return response.json()
     except Exception:
         logger.error('Ошибка запроса к API')
@@ -60,7 +60,7 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Проверка ответа API-сервиса на корректность."""
-    if type(response) is not dict:
+    if not isinstance(response, dict):
         raise TypeError('Ответ API не является словарем')
     try:
         homeworks = response['homeworks']
@@ -84,26 +84,26 @@ def parse_status(homework):
     homework_name = homework['homework_name']
     homework_status = homework['status']
     if homework_status not in HOMEWORK_STATUSES:
-        raise Exception
+        logger.error(f'Пришел новый статус: {homework_status}')
+        raise Exception(f'Пришел новый статус: {homework_status}')
     verdict = HOMEWORK_STATUSES[homework_status]
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
 def check_tokens():
     """Проверка токенов."""
-    if all((PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)):
-        return True
+    return all((PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID))
 
 
 def main():
     """Основная логика работы бота."""
+    if not check_tokens():
+        logger.critical('Отсутствуют одна или несколько переменных окружения')
+        raise Exception('Отсутствуют одна или несколько переменных окружения')
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
     CURRENT_STATUS = ''
     MESSAGE_ERROR = ''
-    if not check_tokens():
-        logger.critical('Отсутствуют одна или несколько переменных окружения')
-        raise Exception('Отсутствуют одна или несколько переменных окружения')
     while True:
         try:
             response = get_api_answer(current_timestamp)
@@ -111,13 +111,15 @@ def main():
             message = parse_status(check_response(response))
             if message != CURRENT_STATUS:
                 send_message(bot, message)
-            time.sleep(RETRY_TIME)
+                CURRENT_STATUS = message
         except Exception as error:
             logger.error('Возникла ошибка')
             message = str(error)
             if message != MESSAGE_ERROR:
                 send_message(bot, message)
-        time.sleep(RETRY_TIME)
+                MESSAGE_ERROR = message
+        finally:
+            time.sleep(RETRY_TIME)
 
 
 if __name__ == '__main__':
