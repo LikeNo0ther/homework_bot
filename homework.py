@@ -35,15 +35,18 @@ HOMEWORK_STATUSES = {
 
 
 class Important_Exception(Exception):
+    """Обработка ошибок с логгированием."""
     pass
 
 
 def exception_logging_eror(message):
+    """Обработка ошибок с логгированием error."""
     logger.error(message)
     raise Important_Exception(message)
 
 
 def exception_logging_critical(message):
+    """Обработка ошибок с логгированием critical."""
     logger.critical(message)
     raise Important_Exception(message)
 
