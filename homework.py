@@ -36,6 +36,7 @@ HOMEWORK_STATUSES = {
 
 class Important_Exception(Exception):
     """Обработка ошибок с логгированием."""
+
     pass
 
 
