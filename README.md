@@ -25,11 +25,11 @@ cd homework_bot
 Cоздать и активировать виртуальное окружение:
 
 ```
-py -m venv env
+py -m venv venv
 ```
 
 ```
-source env/bin/activate
+source venv/activate
 ```
 
 Установить зависимости из файла requirements.txt:
@@ -50,11 +50,11 @@ pip install -r requirements.txt
 Выполнить миграции:
 
 ```
-python3 manage.py migrate
+py manage.py migrate
 ```
 
 Запустить проект:
 
 ```
-python3 manage.py runserver
+py manage.py runserver
 ```
