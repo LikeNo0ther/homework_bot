@@ -35,7 +35,7 @@ source venv/activate
 Установить зависимости из файла requirements.txt:
 
 ```
-python3 -m pip install --upgrade pip
+py -m pip install --upgrade pip
 ```
 
 ```
